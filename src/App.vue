@@ -1,6 +1,11 @@
 <template>
-  <v-app id="page">
-    <router-view></router-view>
+  <v-app>
+    <transition
+      name="fade"
+      mode="out-in"
+    >
+      <router-view></router-view>
+    </transition>
   </v-app>
 </template>
 
@@ -19,5 +24,21 @@ export default {
   text-align: center;
   margin: 0 auto;
   width: 80%;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  transition: opacity 1s ease;
+}
+
+.fade-leave {
+}
+
+.fade-leave-active {
+  transition: opacity 1s ease;
+  opacity: 0;
 }
 </style>

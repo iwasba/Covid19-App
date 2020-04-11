@@ -11,14 +11,25 @@
         </v-col>
         <v-col>
 
-          <h3 class="increase">{{calcDiff(this.summary.total,this.summary.total_last)}}</h3>
+          <h3 class="increase">{{calcDiff(this.cases[0],this.cases[1])}}</h3>
           <h3>INCREASE IN CASES </h3>
+        </v-col>
+        <v-col>
+          <h3
+            v-if="this.changeColor"
+            class="decrease"
+          >{{calcChange(this.cases[0],this.cases[1],this.cases[2])}}</h3>
+          <h3
+            v-if="!this.changeColor"
+            class="increase"
+          >{{calcChange(this.cases[0],this.cases[1],this.cases[2])}}</h3>
+          <h3>FROM YESTERDAY </h3>
         </v-col>
       </v-row>
       <div class="chart-container">
         <chart
           v-if="loaded"
-          :chartdata="chartData"
+          :chartdata="caseChartData"
           :options="chartOptions"
         />
       </div>
@@ -28,6 +39,7 @@
 
 <script>
 import axios from "axios";
+// import dashboard from "../../components/Dashboard"
 import chart from "../../components/CasesChart"
 
 export default {
@@ -35,25 +47,24 @@ export default {
   props: {
   },
   components: {
-    chart
+    chart,
+    // dashboard
   },
   data () {
     return {
       country: '',
       loaded: false,
-      countryCases: null,
       summary: {
         total: null,
         deaths: null,
         recovered: null,
-        total_last: null,
-        deaths_last: null,
-        recovered_last: null,
-
       },
 
+      changeColor: false,
+      diffColor: false,
+
       //chart config
-      chartData: {
+      caseChartData: {
         labels: [],
         datasets: [
           {
@@ -62,6 +73,29 @@ export default {
           }
         ]
       },
+      deathChartData: {
+        labels: [],
+        datasets: [
+          {
+            backgroundColor: '#f87979',
+            data: []
+          }
+        ]
+      },
+      recoverChartData: {
+        labels: [],
+        datasets: [
+          {
+            backgroundColor: '#f87979',
+            data: []
+          }
+        ]
+      },
+
+      cases: [],
+      deaths: [],
+      recovers: [],
+
       chartOptions: {
         responsive: true,
         aspectRatio: 10,
@@ -106,11 +140,24 @@ export default {
     ])
       .then(axios.spread((first_response, second_response, third_response) => {
 
-        this.countryCases = first_response.data
+        //cases data
+        first_response.data.forEach(element => {
+          this.caseChartData.datasets[0].data.push(element.Cases);
+          this.caseChartData.labels.push(element.Date)
+          this.loaded = true
+        });
 
-        this.countryCases.forEach(element => {
-          this.chartData.datasets[0].data.push(element.Cases);
-          this.chartData.labels.push(element.Date)
+        //deaths data
+        second_response.data.forEach(element => {
+          this.deathChartData.datasets[0].data.push(element.Cases);
+          this.deathChartData.labels.push(element.Date)
+          this.loaded = true
+        });
+
+        //recovered data
+        third_response.data.forEach(element => {
+          this.recoverChartData.datasets[0].data.push(element.Cases);
+          this.recoverChartData.labels.push(element.Date)
           this.loaded = true
         });
 
@@ -118,9 +165,12 @@ export default {
         this.summary.deaths = second_response.data[second_response.data.length - 1].Cases
         this.summary.recovered = third_response.data[third_response.data.length - 1].Cases
 
-        this.summary.total_last = first_response.data[first_response.data.length - 2].Cases
-        this.summary.deaths_last = second_response.data[second_response.data.length - 2].Cases
-        this.summary.recovered_last = third_response.data[third_response.data.length - 2].Cases
+        for (var i = 0; i < 3; i++) {
+          this.cases.push(first_response.data[first_response.data.length - 1 - i].Cases)
+          this.deaths.push(second_response.data[first_response.data.length - 1 - i].Cases)
+          this.recovers.push(third_response.data[first_response.data.length - 1 - i].Cases)
+        }
+
 
       }))
 
@@ -128,13 +178,30 @@ export default {
 
   methods: {
     calcDiff (before, after) {
-      console.log(before, ' ', after)
-
       var difference = ((1 - Number(after) / Number(before)) * 100).toPrecision(3)
 
-      var percent = (difference > 0) ? "+" + difference + "%" : "-" + difference + "%"
+      if (difference > 0) {
+        return "+" + difference + "%"
+      }
+      else {
+        this.diffColor = true
+        return difference + "%"
+      }
+    },
 
-      return percent
+    calcChange (a, b, c) {
+      var difference1 = ((1 - Number(b) / Number(a)) * 100).toPrecision(3)
+      var difference2 = ((1 - Number(c) / Number(b)) * 100).toPrecision(3)
+
+      var change = difference1 - difference2
+
+      if (change > 0) {
+        return "+" + change + "%"
+      }
+      else {
+        this.changeColor = true
+        return change + "%"
+      }
     },
     countryTotal () {
       console.log('country called')
@@ -166,7 +233,11 @@ h3 {
 
 .increase {
   color: rgb(228, 186, 186);
-  font-size: 36px;
+  font-size: 24px;
+}
+.decrease {
+  color: rgb(183, 231, 181);
+  font-size: 24px;
 }
 
 .deaths {
