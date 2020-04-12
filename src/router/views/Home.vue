@@ -27,6 +27,14 @@
             <h2>VIEW STATISTICS</h2>
           </router-link>
         </v-btn>
+        <div v-if="!loaded">
+          <h5>Please wait fetching data...</h5>
+          <v-progress-circular
+            indeterminate
+            color="white"
+          ></v-progress-circular>
+
+        </div>
         <div v-if="loaded">
           <h3> TOTAL: {{summary.data.Global.TotalConfirmed}}</h3>
           <h3 class="deaths">DEATHS: {{summary.data.Global.TotalDeaths}}</h3>
@@ -154,6 +162,15 @@ h4 {
   font-size: 8;
   opacity: 0.4;
   font-weight: 100;
+  color: white;
+}
+
+h5 {
+  padding-top: 40px;
+  padding-bottom: 20px;
+  font-size: 8;
+  opacity: 0.4;
+  font-weight: 200;
   color: white;
 }
 </style>
