@@ -2,7 +2,7 @@
 <template>
   <div>
     <div class="background centered">
-      <h1>COVID TRACKER</h1>
+      <h1>COVID <br />TRACKER</h1>
       <div class="centered-item">
         <v-autocomplete
           dark
@@ -58,12 +58,11 @@ export default {
     console.log("mounted");
 
     axios.all([
-      this.countryRequest(), //or direct the axios request
       this.summaryRequest()
     ])
-      .then(axios.spread((first_response, second_response) => {
-        this.countries = first_response.data
-        this.summary = second_response
+      .then(axios.spread((first_response) => {
+        this.countries = first_response.data.Countries
+        this.summary = first_response
       }))
     this.loaded = true
   },
@@ -72,11 +71,6 @@ export default {
   methods: {
     submit () {
       this.$router.push('stats')
-    },
-
-    countryRequest () {
-      console.log('country called')
-      return axios.get('https://api.covid19api.com/countries')
     },
     summaryRequest () {
       console.log('summary called')
@@ -149,7 +143,7 @@ h3 {
 }
 
 h1 {
-  padding-top: 220px;
+  padding-top: 190px;
   font-size: 60px;
   font-family: "Lulo";
   color: white;

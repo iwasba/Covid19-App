@@ -44,7 +44,7 @@ export default {
   name: "Home",
   props: {
     dashboard: String,
-    summary: Object,
+    summary: Number,
     type: Array,
     chartdata: Object,
     chartOptions: Object,
