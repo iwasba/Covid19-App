@@ -1,11 +1,12 @@
 
 <template>
   <div>
-    <v-row class="centered-item">
+    <v-row>
       <v-col>
-        <h3> TOTAL: {{summary.total}}</h3>
+        <h3 class="total">{{summary}}</h3>
+        <!-- <h3> TOTAL: {{summary.total}}</h3>
         <h3 class="deaths">DEATHS: {{summary.deaths}}</h3>
-        <h3 class="recovers">RECOVERED: {{summary.recovered}}</h3>
+        <h3 class="recovers">RECOVERED: {{summary.recovered}}</h3> -->
       </v-col>
       <v-col>
 
@@ -21,13 +22,15 @@
           v-if="!this.changeColor"
           class="increase"
         >{{calcChange(this.type[0],this.type[1],this.type[2])}}</h3>
-        <h3>FROM YESTERDAY </h3>
+        <h3>FROM YESTERDAY</h3>
       </v-col>
     </v-row>
-    <div class="chart-container">
+    <div class="container">
       <chart
-        v-if="loaded"
-        :chartData="chartData"
+        :width="100"
+        :height="50"
+        :colour="colour"
+        :chartdata="chartdata"
         :options="chartOptions"
       />
     </div>
@@ -43,8 +46,9 @@ export default {
     dashboard: String,
     summary: Object,
     type: Array,
-    chartData: Object,
-    chartOptions: Object
+    chartdata: Object,
+    chartOptions: Object,
+    colour: String
   },
   components: {
     chart
@@ -88,10 +92,10 @@ export default {
     },
 
     calcChange (a, b, c) {
-      var difference1 = ((1 - Number(b) / Number(a)) * 100).toPrecision(3)
-      var difference2 = ((1 - Number(c) / Number(b)) * 100).toPrecision(3)
+      var difference1 = ((1 - Number(b) / Number(a)) * 100)
+      var difference2 = ((1 - Number(c) / Number(b)) * 100)
 
-      var change = difference1 - difference2
+      var change = (difference1 - difference2).toPrecision(3)
 
       if (change > 0) {
         return "+" + change + "%"
@@ -126,25 +130,19 @@ h3 {
   font-size: 24px;
 }
 
-.deaths {
-  color: rgb(228, 186, 186);
-}
-
-.recovers {
-  color: rgb(183, 231, 181);
+.total {
+  font-size: 40px;
 }
 
 .centered-item {
-  padding-top: 1%;
+  padding-top: -20%;
   padding-left: 25%;
   padding-right: 25%;
 }
 
-.chart-container {
-  padding-top: -20%;
-  height: 30%;
-  padding-left: 25%;
-  padding-right: 25%;
+.container {
+  padding-left: 3%;
+  padding-right: 3%;
 }
 
 @font-face {

@@ -7,7 +7,7 @@
       <router-view></router-view>
     </transition>
   </v-app>
-</template>
+</template>x`
 
 <script>
 export default {
@@ -31,14 +31,11 @@ export default {
 }
 
 .fade-enter-active {
-  transition: opacity 1s ease;
-}
-
-.fade-leave {
+  transition: opacity 0.5s ease;
 }
 
 .fade-leave-active {
-  transition: opacity 1s ease;
+  transition: opacity 0.5s ease;
   opacity: 0;
 }
 </style>

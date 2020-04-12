@@ -27,12 +27,13 @@
             <h2>VIEW STATISTICS</h2>
           </router-link>
         </v-btn>
-
-        <h3> TOTAL: {{summary.data.Global.TotalConfirmed}}</h3>
-        <h3 class="deaths">DEATHS: {{summary.data.Global.TotalDeaths}}</h3>
-        <h3 class="recovers">RECOVERED: {{summary.data.Global.TotalRecovered}}</h3>
-
+        <div v-if="loaded">
+          <h3> TOTAL: {{summary.data.Global.TotalConfirmed}}</h3>
+          <h3 class="deaths">DEATHS: {{summary.data.Global.TotalDeaths}}</h3>
+          <h3 class="recovers">RECOVERED: {{summary.data.Global.TotalRecovered}}</h3>
+        </div>
       </div>
+      <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2019</i></h4>
     </div>
   </div>
 </template>
@@ -50,6 +51,7 @@ export default {
       country: "Canada",
       countries: null,
       summary: null,
+      loaded: false,
     };
   },
   mounted () {
@@ -63,6 +65,7 @@ export default {
         this.countries = first_response.data
         this.summary = second_response
       }))
+    this.loaded = true
   },
 
 
@@ -94,9 +97,8 @@ export default {
     ),
     url("../../assets/corona.gif");
 
-  /* background-image: url("../../assets/corona.gif"); */
   width: 100%;
-  height: 100%;
+  height: 120%;
   position: absolute;
   top: 0;
   left: 0;
@@ -150,6 +152,14 @@ h1 {
   padding-top: 220px;
   font-size: 60px;
   font-family: "Lulo";
+  color: white;
+}
+
+h4 {
+  padding-top: 80px;
+  font-size: 8;
+  opacity: 0.4;
+  font-weight: 100;
   color: white;
 }
 </style>

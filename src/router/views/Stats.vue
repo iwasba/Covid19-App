@@ -2,53 +2,92 @@
 <template>
   <div>
     <div class="background centered">
-      <h1>{{country}}</h1>
-      <v-row class="centered-item">
+      <v-row>
         <v-col>
-          <h3> TOTAL: {{summary.total}}</h3>
-          <h3 class="deaths">DEATHS: {{summary.deaths}}</h3>
-          <h3 class="recovers">RECOVERED: {{summary.recovered}}</h3>
+          <div
+            @click="goBack"
+            class="backButton"
+          >
+            <img
+              src="../../assets/back.png"
+              style="height:30px;"
+            />
+          </div>
+        </v-col>
+        <v-col :cols="6">
+          <h1>{{country}}</h1>
         </v-col>
         <v-col>
-
-          <h3 class="increase">{{calcDiff(this.cases[0],this.cases[1])}}</h3>
-          <h3>INCREASE IN CASES </h3>
-        </v-col>
-        <v-col>
-          <h3
-            v-if="this.changeColor"
-            class="decrease"
-          >{{calcChange(this.cases[0],this.cases[1],this.cases[2])}}</h3>
-          <h3
-            v-if="!this.changeColor"
-            class="increase"
-          >{{calcChange(this.cases[0],this.cases[1],this.cases[2])}}</h3>
-          <h3>FROM YESTERDAY </h3>
         </v-col>
       </v-row>
-      <div class="chart-container">
-        <chart
-          v-if="loaded"
-          :chartdata="caseChartData"
-          :options="chartOptions"
-        />
+      <div class="centered-item">
+        <v-tabs
+          class="mt-n4"
+          v-model="tab"
+          dark
+          background-color="transparent"
+          grow
+        >
+          <v-tab
+            v-for="n in 3"
+            :key="n"
+            color="transparent"
+          >
+            {{ items[n-1] }}
+          </v-tab>
+          <v-tabs-items v-model="tab">
+            <v-tab-item>
+              <dashboard
+                v-if="loaded"
+                dashboard="CASES"
+                :summary="summary.total"
+                :type="cases"
+                :chartdata="caseChartData"
+                :chartOptions="chartOptions"
+                colour="white"
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <dashboard
+                v-if="loaded"
+                dashboard="DEATHS"
+                :summary="summary.deaths"
+                :type="deaths"
+                :chartdata="deathChartData"
+                :chartOptions="chartOptions"
+                colour="red"
+              />
+            </v-tab-item>
+            <v-tab-item>
+              <dashboard
+                v-if="loaded"
+                dashboard="RECOVERY"
+                :summary="summary.recovered"
+                :type="recovers"
+                :chartdata="recoverChartData"
+                :chartOptions="chartOptions"
+                colour="green"
+              />
+            </v-tab-item>
+          </v-tabs-items>
+        </v-tabs>
       </div>
+      <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2019</i></h4>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-// import dashboard from "../../components/Dashboard"
-import chart from "../../components/CasesChart"
+import dashboard from "../../components/Dashboard"
 
 export default {
-  name: "Home",
+  name: "Stats",
   props: {
   },
   components: {
-    chart,
-    // dashboard
+
+    dashboard
   },
   data () {
     return {
@@ -59,9 +98,9 @@ export default {
         deaths: null,
         recovered: null,
       },
-
-      changeColor: false,
-      diffColor: false,
+      cases: [],
+      deaths: [],
+      recovers: [],
 
       //chart config
       caseChartData: {
@@ -91,15 +130,8 @@ export default {
           }
         ]
       },
-
-      cases: [],
-      deaths: [],
-      recovers: [],
-
       chartOptions: {
-        responsive: true,
-        aspectRatio: 10,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         scales: {
           yAxes: [{
             ticks: {
@@ -121,8 +153,11 @@ export default {
         legend: {
           display: false
         },
-      }
-
+      },
+      tab: null,
+      items: [
+        'CASES', 'DEATHS', 'RECOVERY'
+      ],
 
 
     };
@@ -144,21 +179,18 @@ export default {
         first_response.data.forEach(element => {
           this.caseChartData.datasets[0].data.push(element.Cases);
           this.caseChartData.labels.push(element.Date)
-          this.loaded = true
         });
 
         //deaths data
         second_response.data.forEach(element => {
           this.deathChartData.datasets[0].data.push(element.Cases);
           this.deathChartData.labels.push(element.Date)
-          this.loaded = true
         });
 
         //recovered data
         third_response.data.forEach(element => {
           this.recoverChartData.datasets[0].data.push(element.Cases);
           this.recoverChartData.labels.push(element.Date)
-          this.loaded = true
         });
 
         this.summary.total = first_response.data[first_response.data.length - 1].Cases
@@ -170,13 +202,19 @@ export default {
           this.deaths.push(second_response.data[first_response.data.length - 1 - i].Cases)
           this.recovers.push(third_response.data[first_response.data.length - 1 - i].Cases)
         }
-
+        this.loaded = true
 
       }))
 
   },
 
   methods: {
+
+    goBack () {
+      console.log('called')
+      this.$router.go(-1)
+    },
+
     calcDiff (before, after) {
       var difference = ((1 - Number(after) / Number(before)) * 100).toPrecision(3)
 
@@ -223,6 +261,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.backButton {
+  padding-top: 92px;
+}
+
+img:active {
+  opacity: 0.3;
+}
+
 h3 {
   font-size: 14px;
   font-weight: 100;
@@ -254,13 +300,6 @@ h3 {
   padding-right: 25%;
 }
 
-.chart-container {
-  padding-top: -20%;
-  height: 30%;
-  padding-left: 25%;
-  padding-right: 25%;
-}
-
 .background {
   background-image: linear-gradient(
       to bottom,
@@ -269,9 +308,8 @@ h3 {
     ),
     url("../../assets/corona.gif");
 
-  /* background-image: url("../../assets/corona.gif"); */
   width: 100%;
-  height: 100%;
+  height: 120%;
   position: absolute;
   top: 0;
   left: 0;
@@ -289,6 +327,17 @@ h1 {
   padding-top: 60px;
   font-size: 60px;
   font-family: "Lulo";
+  color: white;
+}
+
+.theme--light.v-tabs-items {
+  background: transparent;
+}
+h4 {
+  padding-top: 40px;
+  font-size: 8;
+  opacity: 0.4;
+  font-weight: 100;
   color: white;
 }
 </style>
