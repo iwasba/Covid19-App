@@ -1,8 +1,7 @@
-
 <template>
   <div>
     <div class="background centered">
-      <h1>COVID <br />TRACKER</h1>
+      <h1>COVID-19 <br />TRACKER</h1>
       <div class="centered-item">
         <v-autocomplete
           dark
@@ -16,14 +15,10 @@
         >
         </v-autocomplete>
 
-        <v-btn
-          x-large
-          outlined
-          small
-          color="white"
-          class="mb-8"
-        >
-          <router-link :to="{ name: 'stats', params: { country:this.country } }">
+        <v-btn x-large outlined small color="white" class="mb-8">
+          <router-link
+            :to="{ name: 'stats', params: { country: this.country } }"
+          >
             <h2>VIEW STATISTICS</h2>
           </router-link>
         </v-btn>
@@ -33,15 +28,22 @@
             indeterminate
             color="white"
           ></v-progress-circular>
-
         </div>
         <div v-if="loaded">
-          <h3> TOTAL: {{summary.data.Global.TotalConfirmed}}</h3>
-          <h3 class="deaths">DEATHS: {{summary.data.Global.TotalDeaths}}</h3>
-          <h3 class="recovers">RECOVERED: {{summary.data.Global.TotalRecovered}}</h3>
+          <h3>
+            TOTAL: {{ numberWithCommas(summary.data.Global.TotalConfirmed) }}
+          </h3>
+          <h3 class="deaths">
+            DEATHS:
+            {{ numberWithCommas(summary.data.Global.TotalDeaths) }}
+          </h3>
+          <h3 class="recovers">
+            RECOVERED:
+            {{ numberWithCommas(summary.data.Global.TotalRecovered) }}
+          </h3>
         </div>
       </div>
-      <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2019</i></h4>
+      <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2020</i></h4>
     </div>
   </div>
 </template>
@@ -52,9 +54,9 @@ import axios from "axios";
 export default {
   name: "Home",
   props: {
-    msg: String
+    msg: String,
   },
-  data () {
+  data() {
     return {
       country: "Canada",
       countries: null,
@@ -62,33 +64,33 @@ export default {
       loaded: false,
     };
   },
-  mounted () {
+  mounted() {
     console.log("mounted");
 
-    axios.all([
-      this.summaryRequest()
-    ])
-      .then(axios.spread((first_response) => {
-        this.countries = first_response.data.Countries
-        this.summary = first_response
-      }))
-    this.loaded = true
+    axios.all([this.summaryRequest()]).then(
+      axios.spread((first_response) => {
+        this.countries = first_response.data.Countries;
+        this.summary = first_response;
+      })
+    );
+    this.loaded = true;
   },
 
-
   methods: {
-    submit () {
-      this.$router.push('stats')
+    submit() {
+      this.$router.push("stats");
     },
-    summaryRequest () {
-      console.log('summary called')
-      return axios.get('https://api.covid19api.com/summary')
-    }
-  }
+    summaryRequest() {
+      console.log("summary called");
+      return axios.get("https://api.covid19api.com/summary");
+    },
+    numberWithCommas(x) {
+      console.log(x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+  },
 };
 </script>
-
-
 
 <style scoped>
 .background {
