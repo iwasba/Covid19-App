@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <div class="background centered">
-      <h1>COVID-19 <br />TRACKER</h1>
-      <div class="centered-item">
+  <div class="background centered mt-n12">
+    <v-row>
+      <v-col cols="12">
+        <h1>COVID-19 <br />TRACKER</h1>
+      </v-col>
+      <v-col class="centered searchBar" cols="12">
         <v-autocomplete
           dark
           v-model="country"
@@ -12,9 +14,9 @@
           dense
           filled
           label="Select your country"
-        >
-        </v-autocomplete>
-
+        />
+      </v-col>
+      <v-col cols="12">
         <v-btn x-large outlined small color="white" class="mb-8">
           <router-link
             :to="{ name: 'stats', params: { country: this.country } }"
@@ -22,6 +24,8 @@
             <h2>VIEW STATISTICS</h2>
           </router-link>
         </v-btn>
+      </v-col>
+      <v-col cols="12">
         <div v-if="!loaded">
           <h5>Please wait fetching data...</h5>
           <v-progress-circular
@@ -29,6 +33,8 @@
             color="white"
           ></v-progress-circular>
         </div>
+      </v-col>
+      <v-col cols="12">
         <div v-if="loaded">
           <h3>
             TOTAL: {{ numberWithCommas(summary.data.Global.TotalConfirmed) }}
@@ -42,9 +48,11 @@
             {{ numberWithCommas(summary.data.Global.TotalRecovered) }}
           </h3>
         </div>
-      </div>
-      <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2020</i></h4>
-    </div>
+      </v-col>
+      <v-col :style="{ width: '50%' }">
+        <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2020</i></h4>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -65,7 +73,7 @@ export default {
     };
   },
   mounted() {
-    console.log("mounted");
+    window.scrollTo(0, 0);
 
     axios.all([this.summaryRequest()]).then(
       axios.spread((first_response) => {
@@ -93,6 +101,17 @@ export default {
 </script>
 
 <style scoped>
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .background {
   background-image: linear-gradient(
       to bottom,
@@ -120,12 +139,6 @@ a {
   text-decoration: none;
 }
 
-.centered-item {
-  padding-top: 1%;
-  padding-left: 34%;
-  padding-right: 34%;
-}
-
 @font-face {
   font-family: "Lulo";
   src: url("../../assets/Lulo.ttf");
@@ -136,14 +149,6 @@ a {
   src: url("../../assets/Lulo.ttf");
 }
 
-h3 {
-  font-size: 14px;
-  font-weight: 100;
-  font-family: "Lulo";
-  opacity: 0.85;
-  color: white;
-}
-
 .deaths {
   color: rgb(228, 186, 186);
 }
@@ -152,19 +157,53 @@ h3 {
   color: rgb(183, 231, 181);
 }
 
-h1 {
-  padding-top: 190px;
-  font-size: 60px;
-  font-family: "Lulo";
-  color: white;
-}
+@media all and (min-width: 750px) {
+  h4 {
+    font-size: 1vw;
+    opacity: 0.4;
+    font-weight: 100;
+    color: white;
+  }
 
-h4 {
-  padding-top: 80px;
-  font-size: 8;
-  opacity: 0.4;
-  font-weight: 100;
-  color: white;
+  h1 {
+    font-size: 4vw;
+    font-family: "Lulo";
+    color: white;
+  }
+  .searchBar {
+    padding: 0 30% 0 30%;
+  }
+  h3 {
+    font-size: 20px;
+    font-weight: 100;
+    font-family: "Lulo";
+    opacity: 0.85;
+    color: white;
+  }
+}
+@media all and (max-width: 750px) {
+  h4 {
+    font-size: 3vw;
+    opacity: 0.4;
+    font-weight: 100;
+    color: white;
+  }
+
+  h1 {
+    font-size: 8vw;
+    font-family: "Lulo";
+    color: white;
+  }
+  .searchBar {
+    padding: 0 15% 0 15%;
+  }
+  h3 {
+    font-size: 14px;
+    font-weight: 100;
+    font-family: "Lulo";
+    opacity: 0.85;
+    color: white;
+  }
 }
 
 h5 {

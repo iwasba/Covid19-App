@@ -1,16 +1,17 @@
 <template>
-  <div>
-    <div class="background centered">
+  <div class="background centered">
+    <div>
+      <v-row class="padTop" />
       <v-row>
-        <v-col>
-          <div @click="goBack" class="backButton">
-            <img src="../../assets/back.png" style="height: 30px;" />
-          </div>
+        <v-col class="centerContent" cols="3">
+          <v-icon x-large color="white" @click="goBack">
+            mdi-chevron-left
+          </v-icon>
         </v-col>
-        <v-col :cols="6">
+        <v-col cols="7" class="centered">
           <h1>{{ country }}</h1>
         </v-col>
-        <v-col> </v-col>
+        <v-spacer />
       </v-row>
       <div class="centered-item">
         <v-tabs
@@ -60,7 +61,6 @@
           </v-tabs-items>
         </v-tabs>
       </div>
-      <h4>Powered by covid19api, <i>Designed by Aaron Jiang 2019</i></h4>
     </div>
   </div>
 </template>
@@ -152,7 +152,7 @@ export default {
     this.country = this.$route.params.country;
   },
   async mounted() {
-    console.log("mounted");
+    window.scrollTo(0, 0);
 
     axios
       .all([
@@ -262,8 +262,14 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
+.padTop {
+  height: 80px;
+}
 .backButton {
-  padding-top: 92px;
+  position: absolute;
+
+  top: 100px;
+  left: -35vw;
 }
 
 img:active {
@@ -295,12 +301,30 @@ h3 {
   color: rgb(183, 231, 181);
 }
 
-.centered-item {
-  padding-top: 1%;
-  padding-left: 25%;
-  padding-right: 25%;
+@media all and (min-width: 750px) {
+  .centered-item {
+    padding-top: 1%;
+    padding-left: 15%;
+    padding-right: 15%;
+  }
+  h1 {
+    font-size: 60px;
+    font-family: "Lulo";
+    color: white;
+  }
 }
-
+@media all and (max-width: 750px) {
+  .centered-item {
+    padding-top: 1%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+  h1 {
+    font-size: 30px;
+    font-family: "Lulo";
+    color: white;
+  }
+}
 .background {
   background-image: linear-gradient(
       to bottom,
@@ -324,13 +348,11 @@ h3 {
   src: url("../../assets/Lulo.ttf");
 }
 
-h1 {
-  padding-top: 60px;
-  font-size: 60px;
-  font-family: "Lulo";
-  color: white;
+.centerContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
 .theme--light.v-tabs-items {
   background: transparent;
 }

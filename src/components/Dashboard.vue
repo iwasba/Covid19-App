@@ -1,27 +1,23 @@
-
 <template>
   <div>
     <v-row>
-      <v-col>
-        <h3 class="total">{{summary}}</h3>
+      <v-col :class="$vuetify.breakpoint.xsOnly ? 'fullWidth' : ''">
+        <h3 class="total">{{ summary }}</h3>
         <!-- <h3> TOTAL: {{summary.total}}</h3>
         <h3 class="deaths">DEATHS: {{summary.deaths}}</h3>
         <h3 class="recovers">RECOVERED: {{summary.recovered}}</h3> -->
       </v-col>
-      <v-col>
-
-        <h3 class="increase">{{calcDiff(this.type[0],this.type[1])}}</h3>
-        <h3>INCREASE IN {{dashboard}} </h3>
+      <v-col :class="$vuetify.breakpoint.smAndDown ? 'fullWidth' : ''">
+        <h3 class="increase">{{ calcDiff(this.type[0], this.type[1]) }}</h3>
+        <h3>INCREASE IN {{ dashboard }}</h3>
       </v-col>
-      <v-col>
-        <h3
-          v-if="this.changeColor"
-          class="decrease"
-        >{{calcChange(this.type[0],this.type[1],this.type[2])}}</h3>
-        <h3
-          v-if="!this.changeColor"
-          class="increase"
-        >{{calcChange(this.type[0],this.type[1],this.type[2])}}</h3>
+      <v-col :class="$vuetify.breakpoint.smAndDown ? 'fullWidth' : ''">
+        <h3 v-if="this.changeColor" class="decrease">
+          {{ calcChange(this.type[0], this.type[1], this.type[2]) }}
+        </h3>
+        <h3 v-if="!this.changeColor" class="increase">
+          {{ calcChange(this.type[0], this.type[1], this.type[2]) }}
+        </h3>
         <h3>FROM YESTERDAY</h3>
       </v-col>
     </v-row>
@@ -38,7 +34,7 @@
 </template>
 
 <script>
-import chart from "./CasesChart"
+import chart from "./CasesChart";
 
 export default {
   name: "Home",
@@ -48,14 +44,13 @@ export default {
     type: Array,
     chartdata: Object,
     chartOptions: Object,
-    colour: String
+    colour: String,
   },
   components: {
-    chart
+    chart,
   },
-  data () {
+  data() {
     return {
-
       changeColor: false,
       diffColor: false,
 
@@ -64,74 +59,82 @@ export default {
         labels: [],
         datasets: [
           {
-            backgroundColor: '#f87979',
-            data: []
-          }
-        ]
+            backgroundColor: "#f87979",
+            data: [],
+          },
+        ],
       },
-
     };
   },
 
-  async mounted () {
+  async mounted() {
     console.log("mounted");
-
   },
 
   methods: {
-    calcDiff (before, after) {
-      var difference = ((1 - Number(after) / Number(before)) * 100).toPrecision(3)
+    calcDiff(before, after) {
+      var difference = ((1 - Number(after) / Number(before)) * 100).toPrecision(
+        3
+      );
 
       if (difference > 0) {
-        return "+" + difference + "%"
-      }
-      else {
-        this.diffColor = true
-        return difference + "%"
+        return "+" + difference + "%";
+      } else {
+        this.diffColor = true;
+        return difference + "%";
       }
     },
 
-    calcChange (a, b, c) {
-      var difference1 = ((1 - Number(b) / Number(a)) * 100)
-      var difference2 = ((1 - Number(c) / Number(b)) * 100)
+    calcChange(a, b, c) {
+      var difference1 = (1 - Number(b) / Number(a)) * 100;
+      var difference2 = (1 - Number(c) / Number(b)) * 100;
 
-      var change = (difference1 - difference2).toPrecision(3)
+      var change = (difference1 - difference2).toPrecision(3);
 
       if (change > 0) {
-        return "+" + change + "%"
-      }
-      else {
-        this.changeColor = true
-        return change + "%"
+        return "+" + change + "%";
+      } else {
+        this.changeColor = true;
+        return change + "%";
       }
     },
-  }
-}
-
+  },
+};
 </script>
-
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style>
-h3 {
-  font-size: 14px;
-  font-weight: 100;
-  font-family: "Lulo";
-  opacity: 0.85;
-  color: white;
+.fullWidth {
+  min-width: 100%;
+}
+@media all and (max-width: 750px) {
+  .increase {
+    color: rgb(228, 186, 186);
+    font-size: 12px;
+  }
+  .decrease {
+    color: rgb(183, 231, 181);
+    font-size: 12px;
+  }
+
+  .total {
+    font-size: 22px;
+  }
 }
 
-.increase {
-  color: rgb(228, 186, 186);
-  font-size: 24px;
-}
-.decrease {
-  color: rgb(183, 231, 181);
-  font-size: 24px;
-}
+@media all and (min-width: 750px) {
+  .increase {
+    color: rgb(228, 186, 186);
+    font-size: 24px;
+  }
+  .decrease {
+    color: rgb(183, 231, 181);
+    font-size: 24px;
+  }
 
-.total {
-  font-size: 40px;
+  .total {
+    font-size: 40px;
+  }
 }
 
 .centered-item {
@@ -148,12 +151,5 @@ h3 {
 @font-face {
   font-family: "Lulo";
   src: url("../assets/Lulo.ttf");
-}
-
-h1 {
-  padding-top: 60px;
-  font-size: 60px;
-  font-family: "Lulo";
-  color: white;
 }
 </style>

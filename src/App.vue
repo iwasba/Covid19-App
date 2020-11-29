@@ -1,13 +1,10 @@
 <template>
   <v-app>
-    <transition
-      name="fade"
-      mode="out-in"
-    >
+    <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
   </v-app>
-</template>x`
+</template>
 
 <script>
 export default {
@@ -15,7 +12,7 @@ export default {
 
   components: {},
 
-  data: () => ({})
+  data: () => ({}),
 };
 </script>
 
